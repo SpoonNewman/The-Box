@@ -26,11 +26,11 @@ jobs:
       run: |
           rm -rf .terraform
           terraform init
-      working-directory: "./terraform"
+      working-directory: "./Terraform"
 
     
 
     - name: Terraform Apply
       run: terraform apply -auto-approve
-      working-directory: "./terraform"
+      working-directory: "./Terraform"
 
