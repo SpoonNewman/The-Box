@@ -6,28 +6,31 @@ on:
       - "main"
 
 jobs:
-  build:
+  terraform:
+    name: "Provisioning"
     runs-on: ubuntu-latest
+    env:
+         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         AWS_DEFAULT_REGION: us-east-1
+
     steps:
     - name: Checkout
       uses: actions/checkout@v3
       
-    - name: Terraform Init
-      uses: hashicorp/terraform-github-actions/init@v0.4.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TF_ACTION_WORKING_DIR: 'Terraform'
-        AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
 
-    - name: Terraform Validate
-      uses: hashicorp/terraform-github-actions/validate@v0.3.7
+    - name: Terraform Init
+      id: init
+      run: |
+          rm -rf .terraform
+          terraform init
+      working-directory: "./terraform"
+
+    
 
     - name: Terraform Apply
-      uses: hashicorp/terraform-github-actions/apply@v0.4.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TF_ACTION_WORKING_DIR: 'Terraform'
-        AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: terraform apply -auto-approve
+      working-directory: "./terraform"
 
