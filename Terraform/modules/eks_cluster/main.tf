@@ -1,25 +1,10 @@
-terraform {
-  required_providers{
-    aws = {
-      source = "hashicorp/aws"
-      version = "~> 5.10.0"
+terraform{
+    required_providers{
+        aws = {
+            source = "hashicorp/aws"
+            version = "~> 5.10.0"
+        }
     }
-}
-  backend "s3" {
-    bucket                  = "terraform-20230725214213457900000001"
-    key                     = "github_actions_terraform_ci_state"
-    region                  = "us-east-2"
-  }
-}
-
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.cluster.endpoint
-  token                  = data.aws_eks_cluster_auth.cluster.token
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-}
-
-provider "aws" {
-  region = "us-east-2"
 }
 
 module "eks" {
@@ -70,21 +55,3 @@ module "eks" {
     author      = "Spoon_Newman" 
   }
 }
-
-module "eks_deployment"{
-  source = "./modules/k8s_deployment"
-}
-
-resource "aws_kms_key" "bucket_key" {
-    description             = "basic utility key"
-    deletion_window_in_days = 10
-}
-
-data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_id
-}
-
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_id
-}
-
