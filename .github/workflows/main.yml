@@ -31,7 +31,7 @@ jobs:
           context: "."
           file: ./Docker/Dockerfile
           push: true
-          tags: user/theboxapi:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/theboxapi:latest
   
   # terraform:
   #   name: "Provisioning"
