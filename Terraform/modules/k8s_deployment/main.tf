@@ -35,7 +35,7 @@ resource "kubernetes_deployment" "flask_api" {
       }
       spec {
         container {
-          image = "TheBox-flask-api"
+          image = "frankycatnewman/theboxapi"
           name  = "flask-api-container"
           port {
             container_port = 5000
