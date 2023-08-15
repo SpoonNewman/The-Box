@@ -34,6 +34,7 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/theboxapi:latest
   
   terraform:
+    needs: image_build 
     name: "Provisioning"
     runs-on: ubuntu-latest
     env:
