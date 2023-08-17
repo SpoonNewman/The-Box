@@ -80,11 +80,11 @@ resource "aws_kms_key" "bucket_key" {
     deletion_window_in_days = 10
 }
 
-data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_name
-}
+# data "aws_eks_cluster" "cluster" {
+#   name = module.eks.cluster_name
+# }
 
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_name
-}
+# data "aws_eks_cluster_auth" "cluster" {
+#   name = module.eks.cluster_name
+# }
 
