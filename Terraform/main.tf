@@ -75,22 +75,6 @@ module "eks" {
   }
 }
 
-output "cluster_name"{
-  value = module.eks.cluster_name
-}
-
-# data "aws_eks_cluster" "cluster" {
-#   name = module.eks.cluster_name
-# }
-
-# data "aws_eks_cluster_auth" "cluster" {
-#   name = module.eks.cluster_name
-# }
-
-module "eks_deployment"{
-  source = "./modules/k8s_deployment"
-}
-
 resource "aws_kms_key" "bucket_key" {
     description             = "basic utility key"
     deletion_window_in_days = 10
