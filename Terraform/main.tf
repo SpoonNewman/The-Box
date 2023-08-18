@@ -12,14 +12,18 @@ terraform {
   }
 }
 
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.cluster.endpoint
-  token                  = data.aws_eks_cluster_auth.cluster.token
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-}
+
 
 provider "aws" {
   region = "us-east-2"
+}
+
+module "eks_deployment" {
+  source = "./modules/k8s_deployment"
+
+  endpoint = "${module.eks.cluster_endpoint}"
+  cluster_name = "${module.eks.cluster_name}"
+  cluster_ca = "${module.eks.cluster_certificate_authority_data}"
 }
 
 module "eks" {
@@ -71,13 +75,8 @@ module "eks" {
   }
 }
 
-module "eks_deployment"{
-  source = "./modules/k8s_deployment"
-}
-
-resource "aws_kms_key" "bucket_key" {
-    description             = "basic utility key"
-    deletion_window_in_days = 10
+output "cluster_name"{
+  value = module.eks.cluster_name
 }
 
 # data "aws_eks_cluster" "cluster" {
@@ -87,4 +86,14 @@ resource "aws_kms_key" "bucket_key" {
 # data "aws_eks_cluster_auth" "cluster" {
 #   name = module.eks.cluster_name
 # }
+
+module "eks_deployment"{
+  source = "./modules/k8s_deployment"
+}
+
+resource "aws_kms_key" "bucket_key" {
+    description             = "basic utility key"
+    deletion_window_in_days = 10
+}
+
 

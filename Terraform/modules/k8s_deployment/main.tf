@@ -9,6 +9,38 @@ terraform{
 
 
 
+variable "endpoint" {
+    type = string
+    description = "EKS Cluster Endpoint"
+}
+
+variable "cluster_name" {
+  type = string
+  description = "Name of the EKS Cluster"
+}
+
+variable "cluster_ca" {
+    type = string
+    description = "The certificate CA of the cluster"
+}
+
+
+provider "kubernetes" {
+  host                   = var.endpoint
+  cluster_ca_certificate = base64decode(var.cluster_ca)
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "aws"
+    args = [
+      "eks",
+      "get-token",
+      "--cluster-name",
+      var.cluster_name
+    ]
+  }
+}
+
+
 resource "kubernetes_namespace" "flask_api" {
   metadata {
     name = "flask-api"
