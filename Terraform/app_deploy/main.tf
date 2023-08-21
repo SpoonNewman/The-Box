@@ -7,27 +7,27 @@ terraform{
     }
 }
 
-
-
-variable "endpoint" {
-    type = string
-    description = "EKS Cluster Endpoint"
+data "terraform_remote_state" "eks" {
+  backend = "s3"
+  config = {
+    bucket                  = "terraform-20230725214213457900000001"
+    key                     = "github_actions_terraform_ci_state"
+    region                  = "us-east-2"
+  }
 }
 
-variable "cluster_name" {
-  type = string
-  description = "Name of the EKS Cluster"
+# Retrieve EKS cluster information
+provider "aws" {
+  region = data.terraform_remote_state.eks.outputs.region
 }
 
-variable "cluster_ca" {
-    type = string
-    description = "The certificate CA of the cluster"
+data "aws_eks_cluster" "cluster" {
+  name = data.terraform_remote_state.eks.outputs.cluster_name
 }
-
 
 provider "kubernetes" {
-  host                   = var.endpoint
-  cluster_ca_certificate = base64decode(var.cluster_ca)
+  host                   = data.aws_eks_cluster.cluster.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "aws"
@@ -35,22 +35,14 @@ provider "kubernetes" {
       "eks",
       "get-token",
       "--cluster-name",
-      var.cluster_name
+      data.aws_eks_cluster.cluster.name
     ]
-  }
-}
-
-
-resource "kubernetes_namespace" "flask_api" {
-  metadata {
-    name = "flask-api"
   }
 }
 
 resource "kubernetes_deployment" "flask_api" {
   metadata {
     name      = "flask-api"
-    namespace = kubernetes_namespace.flask_api.metadata.0.name
   }
   spec {
     replicas = 2
@@ -81,7 +73,6 @@ resource "kubernetes_deployment" "flask_api" {
 resource "kubernetes_service" "flask_api" {
   metadata {
     name      = "flask-api"
-    namespace = kubernetes_namespace.flask_api.metadata.0.name
   }
   spec {
     selector = {

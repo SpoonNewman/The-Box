@@ -1,17 +1,26 @@
-terraform{
-    required_providers{
-        aws = {
-            source = "hashicorp/aws"
-            version = "~> 5.10.0"
-        }
+terraform {
+  required_providers{
+    aws = {
+      source = "hashicorp/aws"
+      version = "~> 5.10.0"
     }
+}
+  backend "s3" {
+    bucket                  = "terraform-20230725214213457900000001"
+    key                     = "github_actions_terraform_ci_state"
+    region                  = "us-east-2"
+  }
+}
+
+provider "aws" {
+  region = "us-east-2"
 }
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 19.0"
 
-  cluster_name    = "my-cluster"
+  cluster_name    = "spoon_newmans"
   cluster_version = "1.27"
 
   cluster_endpoint_public_access  = true
