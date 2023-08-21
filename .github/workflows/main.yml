@@ -6,7 +6,7 @@ on:
       - "main"
 
 jobs:
-  image_build:
+  image_build: #builds flask application
     name: "Build"
     runs-on: ubuntu-latest
     steps:
@@ -33,7 +33,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/theboxapi:latest
   
-  terraform-cluster:
+  terraform-cluster: # creates kubernetes cluster
     needs: image_build 
     name: "Provision Cluster"
     runs-on: ubuntu-latest
@@ -62,7 +62,7 @@ jobs:
       run: terraform apply -auto-approve
       working-directory: "./Terraform/cluster_deploy"
 
-  terraform-deployment:
+  terraform-deployment: #deploys pods to cluster
     needs: terraform-cluster 
     name: "Provision deployment"
     runs-on: ubuntu-latest
