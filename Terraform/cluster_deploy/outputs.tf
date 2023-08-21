@@ -10,7 +10,7 @@ output "cluster_security_group_id" {
 
 output "region" {
   description = "AWS region"
-  value       = "us-east-1"
+  value       = "us-east-2"
 }
 
 output "cluster_name" {
