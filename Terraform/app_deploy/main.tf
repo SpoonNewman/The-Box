@@ -3,17 +3,17 @@ terraform{
         aws = {
             source = "hashicorp/aws"
             version = "~> 5.10.0"
-        },
+        }
         kubernetes = {
           source = "hashicorp/kubernetes"
           version = ">= 2.16.1"
         }
     }
-    backend "s3" {
-      bucket                  = "terraform-20230725214213457900000001"
-      key                     = "github_actions_terraform_ci_state"
-      region                  = "us-east-2"
-    }
+    # backend "s3" {
+    #   bucket                  = "terraform-20230725214213457900000001"
+    #   key                     = "github_actions_terraform_ci_state"
+    #   region                  = "us-east-2"
+    # }
 }
 
 data "terraform_remote_state" "eks" {
