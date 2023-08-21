@@ -7,7 +7,7 @@ terraform {
 }
   backend "s3" {
     bucket                  = "terraform-20230725214213457900000001"
-    key                     = "github_actions_terraform_ci_state"
+    key                     = "github_actions_terraform_ci_state_cluster"
     region                  = "us-east-2"
   }
 }
